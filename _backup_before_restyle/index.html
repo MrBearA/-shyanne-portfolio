@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shyanne Cay – Game Developer &amp; 3D Artist</title>
+<meta name="description" content="Portfolio of Shyanne Cay, a game developer and 3D artist from the Philippines: characters, environments and game-ready assets made in Blender." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" />
+<style>
+/*
+  VOICE   a 3D artist's portfolio that behaves like a model listing
+  IDEA    the hero is a model viewer with an inspector; the gallery feeds it
+  PICTURE her real models on a turntable, orbit / zoom / pan, every texture channel
+  COLOUR  grey grid paper + ink navy, one orange accent; the viewer is a dark spotlit stage
+  TYPE    Fredoka display, Poppins body
+*/
+:root {
+  color-scheme: light;
+  --bg: #d2d2d2; --ink: #232634; --muted: #4a4e66; --card: #ececec;
+  --night: #1b1d29; --panel: #24273a; --line: #3a3d50; --soft: #c9cbe0;
+  --accent: #f0782b; --accent-text: #a8460f;
+  --display: 'Fredoka', 'Trebuchet MS', sans-serif;
+  --body: 'Poppins', system-ui, sans-serif;
+}
+* { box-sizing: border-box; min-width: 0; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+body {
+  font: 16px/1.6 var(--body); color: var(--ink); background-color: var(--bg);
+  background-image:
+    repeating-linear-gradient(to right, transparent 0 100px, rgba(35,38,52,0.13) 100px 101px),
+    repeating-linear-gradient(to bottom, transparent 0 100px, rgba(35,38,52,0.13) 100px 101px);
+  overflow-x: clip;
+}
+a { color: inherit; }
+button, input { font: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+
+/* header */
+.site-header { position: sticky; top: 0; z-index: 20; border-bottom: 2px solid var(--ink); background: rgba(210,210,210,0.94); backdrop-filter: blur(6px); }
+.site-header .wrap { min-height: 72px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding-top: 8px; padding-bottom: 8px; }
+.logo { font: 700 28px/1 var(--display); text-decoration: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 4px 24px; font-weight: 500; }
+.nav a { text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
+.nav a:hover { border-color: var(--accent); }
+.btn { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 20px; border-radius: 10px; border: 2px solid var(--ink); font-weight: 600; text-decoration: none; cursor: pointer; background: transparent; color: var(--ink); transition: transform .15s; }
+.btn.solid { background: var(--ink); color: #fff; }
+.btn.pop { box-shadow: 5px 5px 0 var(--accent); }
+.btn:hover { transform: translate(-1px, -1px); }
+
+/* hero */
+.hero { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 40px; padding-top: 44px; padding-bottom: 64px; }
+.hero-text { flex: 1 1 320px; display: flex; flex-direction: column; gap: 14px; padding-top: 20px; }
+.kicker { font-size: 17px; font-weight: 500; color: var(--muted); }
+h1 { font: 700 clamp(46px, 7vw, 72px)/0.98 var(--display); text-wrap: balance; }
+.badge { align-self: flex-start; padding: 5px 14px; border-radius: 999px; border: 2px solid var(--ink); background: var(--accent); font-weight: 600; font-size: 15px; }
+.lead { font-size: 18px; color: var(--muted); max-width: 520px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.facts { font-size: 15px; color: var(--muted); }
+
+/* viewer */
+.viewer-card { flex: 1 1 600px; max-width: 760px; border-radius: 18px; border: 2px solid var(--ink); background: var(--night); color: #fff; box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
+.viewer-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.viewer-title { font: 600 19px/1.2 var(--display); }
+.viewer-title small { display: block; font: 400 13px/1.4 var(--body); color: var(--soft); }
+.mini { min-height: 40px; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 8px; border: 2px solid #fff; background: transparent; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; }
+.mini.subtle { border-color: var(--line); }
+.stage { position: relative; height: 460px; background: radial-gradient(ellipse at 50% 45%, #4a4d63 0%, #2a2c3b 45%, #121319 100%); }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.stage canvas:active { cursor: grabbing; }
+.tools { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+.tool { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; border: 1px solid #55586a; background: rgba(20,21,29,0.75); color: #fff; cursor: pointer; }
+.tool[aria-pressed="true"] { background: var(--accent); color: var(--night); border-color: var(--accent); }
+.channel-label { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 2; padding: 3px 12px; border-radius: 999px; background: rgba(0,0,0,0.6); font-size: 13px; font-weight: 600; white-space: nowrap; pointer-events: none; }
+.hint { position: absolute; left: 12px; bottom: 10px; right: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 12.5px; color: var(--soft); pointer-events: none; }
+.hint b { color: #fff; font-weight: 600; }
+.status { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; color: var(--soft); font-size: 15px; pointer-events: none; text-align: center; padding: 20px; }
+.status[hidden] { display: none; }
+.dropzone { position: absolute; inset: 8px; z-index: 5; display: grid; place-items: center; border: 3px dashed var(--accent); border-radius: 14px; background: rgba(27,29,41,0.82); font: 600 20px/1.3 var(--display); pointer-events: none; }
+.dropzone[hidden] { display: none; }
+
+/* compact inspector: two dropdowns under the viewer */
+.bar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 12px; }
+.dd { position: relative; }
+.dd-btn { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+.dd-btn:hover { border-color: #6a6d85; }
+.dd-btn[aria-expanded="true"] { border-color: var(--accent); }
+.dd-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.dd-k { color: var(--soft); font-weight: 500; }
+.chev { transition: transform .15s; }
+.menu { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 10; width: 250px; max-width: calc(100vw - 48px); max-height: 400px; overflow-y: auto; padding: 8px; border-radius: 12px; border: 1px solid var(--line); background: #161823; box-shadow: 0 14px 34px rgba(0,0,0,0.55); display: flex; flex-direction: column; gap: 6px; }
+.menu[hidden] { display: none; }
+.menu.wide { width: 320px; padding: 12px; }
+#inspector { width: 440px; display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "render mat" "geo mat" "uv mat"; gap: 2px 10px; align-content: start; }
+#inspector[hidden] { display: none; }
+#inspector .group:nth-child(1) { grid-area: render; }
+#inspector .group:nth-child(2) { grid-area: mat; }
+#inspector .group:nth-child(3) { grid-area: geo; }
+#inspector .group:nth-child(4) { grid-area: uv; }
+.group { display: flex; flex-direction: column; gap: 2px; }
+.grp { font-size: 12px; font-weight: 600; color: #9ea1bb; padding: 6px 6px 2px; }
+.row-btns { display: flex; flex-direction: column; gap: 2px; }
+.mode { width: 100%; min-height: 38px; display: flex; align-items: center; gap: 10px; padding: 0 8px; border-radius: 8px; border: 0; background: transparent; color: #fff; font-size: 14px; text-align: left; cursor: pointer; }
+.mode:hover { background: rgba(255,255,255,0.08); }
+.mode[aria-pressed="true"] { background: var(--accent); color: var(--night); font-weight: 600; }
+.ic { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; }
+.ic-final { background: radial-gradient(circle at 35% 35%, #fff, #8a8fa8 60%, #2a2c3b); }
+.ic-clay { background: radial-gradient(circle at 35% 35%, #f3e4d2, #b79d80 70%); }
+.ic-base { background: conic-gradient(#e85d5d, #e0a526, #3f8f4e, #4a78d6, #9a7fd1, #e85d5d); }
+.ic-normal { background: radial-gradient(circle at 35% 35%, #c9b8ff, #7f7fff 60%, #4a3fd1); }
+.ic-rough { background: repeating-conic-gradient(#d0d0d0 0 25%, #6a6a6a 0 50%) 0 0 / 6px 6px; }
+.ic-metal { background: linear-gradient(135deg, #fafafa, #8a8a8a 50%, #e6e6e6 70%, #555); }
+.ic-emit { background: radial-gradient(circle, #ffd27a, #f0782b 55%, #3a1a08); }
+.ic-wire { border-radius: 3px; background: linear-gradient(45deg, transparent 44%, currentColor 44% 56%, transparent 56%); }
+.ic-vnorm { border-radius: 3px; background: repeating-linear-gradient(90deg, transparent 0 3px, #7fd1b9 3px 4.5px); }
+.ic-uv { border-radius: 3px; background: repeating-conic-gradient(#fff 0 25%, #232634 0 50%) 0 0 / 8px 8px; }
+
+/* material sliders (inside the Material dropdown) */
+.material-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.material-head span { font: 600 16px/1.2 var(--display); }
+.mat-note { font-size: 12.5px; color: var(--soft); margin: 0 0 4px; }
+.sliders { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.slider { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 10px; font-size: 14px; }
+.slider output { font-variant-numeric: tabular-nums; color: var(--soft); font-size: 13px; }
+.slider input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); min-height: 26px; }
+.slider input[type=color] { width: 44px; height: 32px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); padding: 2px; cursor: pointer; }
+.stats { margin-left: auto; display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 12.5px; color: var(--soft); }
+.stats b { color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+.toast { padding: 0 16px; font-size: 13px; color: #ffb27a; }
+.toast:not(:empty) { padding-bottom: 12px; }
+
+/* sections */
+.section { padding-top: 40px; padding-bottom: 64px; }
+h2 { font: 700 clamp(34px, 4.5vw, 44px)/1.05 var(--display); }
+.intro { margin: 6px 0 26px; font-size: 17px; color: var(--muted); max-width: 640px; }
+.card { background: var(--card); border: 2px solid var(--ink); border-radius: 12px; box-shadow: 6px 6px 0 var(--ink); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags span { padding: 2px 10px; border: 1.5px solid var(--ink); border-radius: 999px; font-size: 13px; font-weight: 500; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 24px; }
+.tile { display: flex; flex-direction: column; overflow: hidden; text-align: left; color: var(--ink); cursor: pointer; padding: 0; transition: transform .15s, box-shadow .15s; }
+.tile:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
+.tile[aria-pressed="true"] { border-color: var(--accent); box-shadow: 6px 6px 0 var(--accent); }
+.thumb { position: relative; aspect-ratio: 4 / 3; background: radial-gradient(ellipse at 50% 45%, #4a4d63, #1b1d29); color: #fff; display: grid; place-items: center; }
+.thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.now { position: absolute; left: 10px; top: 10px; padding: 2px 10px; border-radius: 999px; background: var(--accent); color: var(--night); font-size: 12px; font-weight: 700; }
+.now[hidden] { display: none; }
+.tile-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.tile-body strong { font-size: 17px; }
+.tile-body small { color: var(--muted); font-size: 13px; }
+.empty { padding: 20px; color: var(--muted); }
+.work { display: flex; flex-direction: column; overflow: hidden; }
+.work .thumb img, .project .thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.project .thumb { position: relative; overflow: hidden; }
+.work-link { margin-top: 4px; font-weight: 600; color: var(--accent-text); }
+.intro a { color: var(--accent-text); font-weight: 600; }
+
+.row { display: flex; flex-wrap: wrap; gap: 24px; }
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 24px; }
+.project { flex: 1 1 340px; display: flex; flex-direction: column; gap: 10px; padding: 18px; }
+.project .thumb { aspect-ratio: 4 / 3; border-radius: 8px; }
+.project h3 { margin-top: 4px; font: 600 24px/1.2 var(--display); }
+.project p { color: var(--muted); }
+.project p strong { color: var(--ink); }
+.skill { flex: 1 1 260px; display: flex; flex-direction: column; gap: 12px; padding: 20px; }
+.skill h3 { font-size: 19px; }
+.skill p { font-size: 14px; color: var(--muted); }
+.about { display: flex; flex-wrap: wrap; gap: 32px; padding-bottom: 72px; }
+.about > div { flex: 1 1 380px; display: flex; flex-direction: column; gap: 12px; }
+.about p { font-size: 17px; color: var(--muted); }
+.timeline { padding: 22px; }
+.timeline h3 { font: 600 24px/1.2 var(--display); }
+.entry { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 4px 14px; }
+.entry span:first-child { font-weight: 600; }
+.entry .note { grid-column: 2; color: var(--muted); }
+.footer { background: var(--night); color: #fff; }
+.footer .wrap { padding-top: 52px; padding-bottom: 32px; display: flex; flex-wrap: wrap; gap: 28px 48px; }
+.footer .wrap > div { flex: 1 1 320px; }
+.footer h2 { margin-bottom: 10px; }
+.footer p { color: var(--soft); }
+.links { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px 14px; align-content: start; }
+.links span { color: var(--soft); }
+.links a { color: #fff; overflow-wrap: anywhere; }
+
+@media (max-width: 600px) {
+  .wrap { padding: 0 16px; }
+  .stage { height: 360px; }
+  .site-header .btn { display: none; }
+  .logo { font-size: 24px; }
+  .nav { gap: 0 11px; font-size: 13.5px; }
+  html { scroll-padding-top: 110px; }
+  .hint .wide { display: none; }
+  .stats { margin-left: 0; width: 100%; }
+  .hide-sm { display: none; }
+  .dd-k { display: none; }
+  .dd { position: static; }
+  .menu, .menu.wide, #inspector { left: 12px; right: 12px; width: auto; max-width: none; max-height: 330px; }
+  #inspector { display: flex; flex-direction: column; }
+  .links { grid-template-columns: 1fr; gap: 2px; }
+  .links a { margin-bottom: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .tile { transition: none; }
+}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#top">Shyanne</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#gallery">3D Models</a><a href="#work">Work</a><a href="#projects">Games</a><a href="#toolkit">Toolkit</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+    <a class="btn solid" href="mailto:shyanne.kimberly.cay@gmail.com">Email me</a>
+  </div>
+</header>
+
+<main>
+  <section id="top" class="wrap hero">
+    <div class="hero-text">
+      <p class="kicker">Game developer · 3D artist</p>
+      <h1>Shyanne Cay</h1>
+      <span class="badge">Blender specialist</span>
+      <p class="lead">I'm a game developer with a strong focus on 3D art: characters, environments and optimised, game-ready assets. I bring concepts to life with detailed visuals while keeping performance and gameplay in mind.</p>
+      <div class="actions">
+        <a class="btn solid pop" href="#work">See my work</a>
+        <a class="btn" href="#contact">Get in touch</a>
+      </div>
+      <p class="facts">Based in the Philippines · Open to 3D artist roles at game studios</p>
+    </div>
+
+    <div class="viewer-card" id="viewer">
+      <div class="viewer-head">
+        <p class="viewer-title"><span id="model-name">Model viewer</span><small id="model-sub">Orbit it like in Blender</small></p>
+      </div>
+
+      <div class="stage" id="stage">
+        <p class="status" id="status">Loading 3D viewer…</p>
+        <p class="channel-label" id="channel-label" hidden></p>
+        <div class="tools">
+          <button class="tool" id="reset" type="button" aria-label="Reset view" title="Reset view">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          </button>
+          <button class="tool" id="spin" type="button" aria-label="Auto-rotate" title="Auto-rotate" aria-pressed="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4"/><path d="M12 8v8"/><path d="m18 14 3-2-3-2"/></svg>
+          </button>
+          <button class="tool" id="full" type="button" aria-label="Fullscreen" title="Fullscreen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+          </button>
+        </div>
+        <p class="hint"><span><b>Drag</b> orbit · <b>Scroll / pinch</b> zoom</span><span class="wide"><b>Right-drag</b> pan</span></p>
+        <div class="dropzone" id="dropzone" hidden><span>Drop a .glb / .fbx and texture maps</span></div>
+      </div>
+
+      <div class="bar">
+        <div class="dd">
+          <button type="button" class="dd-btn" id="view-btn" aria-expanded="false" aria-controls="inspector">
+            <i class="ic ic-final" id="view-ic"></i><span><span class="dd-k">View:</span> <span id="view-label">Final render</span></span>
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+          </button>
+          <div class="menu" id="inspector" role="group" aria-label="Model inspector" hidden>
+            <div class="group">
+          <p class="grp">Render</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-mode="final" aria-pressed="true"><i class="ic ic-final"></i>Final render</button>
+            <button type="button" class="mode" data-mode="clay" aria-pressed="false"><i class="ic ic-clay"></i>Clay</button>
+          </div>
+        </div>
+        <div class="group">
+          <p class="grp">Material channels</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-mode="base" aria-pressed="false"><i class="ic ic-base"></i>Base Color</button>
+            <button type="button" class="mode" data-mode="normal" aria-pressed="false"><i class="ic ic-normal"></i>Normal Map</button>
+            <button type="button" class="mode" data-mode="roughness" aria-pressed="false"><i class="ic ic-rough"></i>Roughness</button>
+            <button type="button" class="mode" data-mode="metallic" aria-pressed="false"><i class="ic ic-metal"></i>Metallic</button>
+            <button type="button" class="mode" data-mode="emission" aria-pressed="false"><i class="ic ic-emit"></i>Emission</button>
+          </div>
+        </div>
+        <div class="group">
+          <p class="grp">Geometry</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-toggle="wire" aria-pressed="false"><i class="ic ic-wire"></i>Wireframe</button>
+            <button type="button" class="mode" data-toggle="normals" aria-pressed="false"><i class="ic ic-vnorm"></i>Vertex normals</button>
+          </div>
+        </div>
+        <div class="group">
+          <p class="grp">UV</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-mode="uv" aria-pressed="false"><i class="ic ic-uv"></i>UV checker</button>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="dd">
+          <button type="button" class="dd-btn" id="mat-btn" aria-expanded="false" aria-controls="mat-menu">
+            <i class="ic ic-metal"></i><span>Material</span>
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+          </button>
+          <div class="menu wide" id="mat-menu" hidden>
+            <div class="material-head">
+              <span>Material</span>
+              <button type="button" class="mini subtle" id="mat-reset">Reset</button>
+            </div>
+            <p class="mat-note">Changes apply to the whole model. Where a texture map exists, the slider scales it.</p>
+            <div class="sliders">
+          <label class="slider" for="s-tint">Base colour tint <input id="s-tint" type="color" value="#ffffff" /></label>
+          <label class="slider" for="s-rough">Roughness <output id="o-rough" for="s-rough">1.00</output><input id="s-rough" type="range" min="0" max="1" step="0.01" value="1" /></label>
+          <label class="slider" for="s-metal">Metallic <output id="o-metal" for="s-metal">1.00</output><input id="s-metal" type="range" min="0" max="1" step="0.01" value="1" /></label>
+          <label class="slider" for="s-normal">Normal strength <output id="o-normal" for="s-normal">1.00</output><input id="s-normal" type="range" min="0" max="3" step="0.05" value="1" /></label>
+          <label class="slider" for="s-emit">Emission strength <output id="o-emit" for="s-emit">1.00</output><input id="s-emit" type="range" min="0" max="5" step="0.05" value="1" /></label>
+        </div>
+          </div>
+        </div>
+        <p class="stats" aria-live="polite"><span><b id="st-tris">–</b> tris</span><span><b id="st-verts">–</b> verts</span><span><b id="st-tex">–</b> textures</span><span class="hide-sm"><b id="st-mats">–</b> materials</span></p>
+      </div>
+      <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section id="gallery" class="wrap section">
+    <h2>3D Gallery</h2>
+    <p class="intro">Real-time versions of my models. Click one to open it in the viewer above, then check its wireframe and texture maps.</p>
+    <div class="gallery" id="gallery-grid"><p class="empty">Loading models…</p></div>
+  </section>
+
+  <section id="work" class="wrap section">
+    <h2>Selected work</h2>
+    <p class="intro">Characters, hard-surface models, props and environments. More on <a href="https://www.artstation.com/seju_fbx">ArtStation</a>.</p>
+    <!-- PLACEHOLDERS: replace the [brackets] with your own text, and add images/work-1.jpg … work-8.jpg.
+         Copy an <article> block to add more pieces. -->
+    <div class="gallery">
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-1.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-2.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-3.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-4.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-5.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-6.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-7.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="card work">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-8.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="tile-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="projects" class="wrap section">
+    <h2>Games</h2>
+    <p class="intro">Games I've helped make, and exactly what I built for them.</p>
+    <div class="games">
+      <article class="card project">
+        <div class="thumb" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-beyond-the-scene.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <h3>Beyond The Scene</h3>
+        <p>An atmospheric visual narrative game about the unseen forms of women&#x27;s labour. No dialogue: the rooms and objects tell the story. Made by Team Tomboy (5 people) for Beyond Game Jam 2026: BiasBreakers.</p>
+        <p><strong>My role:</strong> 3D artist and programmer. I designed and modelled the stop-motion style characters.</p>
+        <div class="tags"><span>Unity</span><span>Blender</span><span>Beyond Game Jam 2026</span></div>
+        <div class="actions"><a class="btn solid" href="https://tokwalover666.itch.io/beyond-the-scene">Play it</a></div>
+      </article>
+      <article class="card project">
+        <div class="thumb" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-factory-romance.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <h3>Factory Romance</h3>
+        <p>You work in a mask factory, but love finds a way: steal kisses in secret, then get back to packing boxes before the boss sees. Made for Global Game Jam 2026 at CIIT.</p>
+        <p><strong>My role:</strong> Co-developer in a team of two.</p>
+        <div class="tags"><span>Unity</span><span>3D</span><span>Global Game Jam 2026</span></div>
+        <div class="actions"><a class="btn solid" href="https://tokwalover666.itch.io/factory-romance">Play it</a></div>
+      </article>
+      <article class="card project">
+        <div class="thumb" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-slop-machine.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <h3>SLOP MACHINE</h3>
+        <p>A chaotic little game about questionable financial decisions: rob strangers, then feed the coins to the slot machine. Made by Kulam Studio (6 people) for Bad Game Jam 2026.</p>
+        <p><strong>My role:</strong> Game designer, 3D artist and animator.</p>
+        <div class="tags"><span>Unity</span><span>Blender</span><span>Bad Game Jam 2026</span></div>
+        <div class="actions"><a class="btn solid" href="https://tokwalover666.itch.io/slop-machine">Play it</a></div>
+      </article>
+      <article class="card project">
+        <div class="thumb" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-cringr.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <h3>Cringr</h3>
+        <p>A dating app no one asked for: swipe through 60 cringe profiles to find the two hidden endings. Made by a team of 4 for Bad Game Jam 2025.</p>
+        <p><strong>My role:</strong> 3D artist, programmer and audio design.</p>
+        <div class="tags"><span>Unity</span><span>Comedy</span><span>Bad Game Jam 2025</span></div>
+        <div class="actions"><a class="btn solid" href="https://tokwalover666.itch.io/cringr">Play it</a></div>
+      </article>
+      <article class="card project">
+        <div class="thumb" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-handle-with-care.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <h3>Handle With Care</h3>
+        <p>A short, atmospheric puzzle game about piecing together broken objects and memories after a breakup. Made by a team of 5 for Beyond Game Jam 2025, celebrating Pride Month.</p>
+        <p><strong>My role:</strong> 3D artist and 3D animation.</p>
+        <div class="tags"><span>Unity</span><span>3D</span><span>Beyond Game Jam 2025</span></div>
+        <div class="actions"><a class="btn solid" href="https://tokwalover666.itch.io/handle-with-care">Play it</a></div>
+      </article>
+      <article class="card project">
+        <div class="thumb" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-the-last-input.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <h3>The Last Input</h3>
+        <p>Our capstone project: a sci-fi game built in Unity, across areas like Sector Null and The Zenith.</p>
+        <p><strong>My role:</strong> Environment design, plus original drones and game props.</p>
+        <div class="tags"><span>Unity</span><span>Environment</span><span>Capstone</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="toolkit" class="wrap section">
+    <h2>Toolkit</h2>
+    <p class="intro">Blender is home base; Substance 3D Painter for texturing; Unity and Unreal Engine 5 to get assets into games.</p>
+    <div class="row">
+      <div class="card skill"><h3>3D art</h3><div class="tags"><span>Character modelling</span><span>Hard-surface modelling</span><span>Environment design</span><span>Low-poly &amp; game-ready assets</span><span>Hand-painted textures</span><span>Rendering in Cycles</span></div><p>Seen in: Selected work and Games above.</p></div>
+      <div class="card skill"><h3>Software</h3><div class="tags"><span>Blender</span><span>Substance 3D Painter</span><span>Character Creator 3</span><span>Unity</span><span>Unreal Engine 5</span></div><p>Seen in: every piece above.</p></div>
+      <div class="card skill"><h3>Game development</h3><div class="tags"><span>Asset integration</span><span>Animation</span><span>Programming</span><span>Game design</span><span>Game jams</span></div><p>Seen in: 5 game jam games, from Cringr to Beyond The Scene.</p></div>
+    </div>
+  </section>
+
+  <section id="about" class="wrap section about">
+    <div>
+      <h2>About me</h2>
+      <p>Hello, I'm Shyanne. I'm a passionate game developer with a strong focus on 3D art. My expertise includes character modelling, environment design and creating optimised, game-ready assets.</p>
+      <p>I'm always improving my skills in 3D workflows, texturing and asset integration, and I enjoy collaborating with others to create immersive and engaging game experiences. I aspire to become a senior 3D artist at a game development studio.</p>
+      <a class="btn solid" href="https://www.linkedin.com/in/shyanne-cay-77a0bb37b/" style="align-self: flex-start; margin-top: 6px">Connect on LinkedIn</a>
+    </div>
+    <div class="card timeline" style="display: flex; flex-direction: column; gap: 16px">
+      <h3>Highlights</h3>
+      <div class="entry"><span>2026</span><span><strong>Beyond Game Jam: BiasBreakers</strong> · Beyond The Scene</span><span class="note">3D artist and programmer.</span></div>
+      <div class="entry"><span>2026</span><span><strong>Global Game Jam @ CIIT</strong> · Factory Romance</span><span class="note">Co-developer, team of two.</span></div>
+      <div class="entry"><span>2026</span><span><strong>Bad Game Jam</strong> · SLOP MACHINE</span><span class="note">Game designer, 3D artist and animator.</span></div>
+      <div class="entry"><span>2025</span><span><strong>Bad Game Jam</strong> · Cringr</span><span class="note">3D artist, programmer and audio design.</span></div>
+      <div class="entry"><span>2025</span><span><strong>Beyond Game Jam</strong> · Handle With Care</span><span class="note">3D artist and 3D animation.</span></div>
+      <div class="entry"><span>Capstone</span><span><strong>The Last Input</strong> · Unity</span><span class="note">Environment design, drones and props.</span></div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact" class="footer">
+  <div class="wrap">
+    <div>
+      <h2>Let's make something</h2>
+      <p>Open to 3D artist roles at game studios, game jam teams and freelance models.</p>
+    </div>
+    <div class="links">
+      <span>Email</span><a href="mailto:shyanne.kimberly.cay@gmail.com">shyanne.kimberly.cay@gmail.com</a>
+      <span>LinkedIn</span><a href="https://www.linkedin.com/in/shyanne-cay-77a0bb37b/">linkedin.com/in/shyanne-cay</a>
+      <span>ArtStation</span><a href="https://www.artstation.com/seju_fbx">artstation.com/seju_fbx</a>
+      <span>itch.io</span><a href="https://seju-fbx.itch.io/">seju-fbx.itch.io</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="viewer.js"></script>
+</body>
+</html>

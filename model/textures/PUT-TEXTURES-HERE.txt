@@ -1,0 +1,1 @@
+Put basecolor.png, normal.png, roughness.png, metallic.png, emission.png (or roughnessmetallic.png) here. See ../README.txt

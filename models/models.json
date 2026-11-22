@@ -1,0 +1,13 @@
+[
+  {
+    "title": "Bed",
+    "description": "Low-poly bed with PBR textures",
+    "file": "models/bed/bed.fbx",
+    "tags": ["Blender", "PBR", "Low-poly"],
+    "textures": {
+      "basecolor": "textures/basecolor.jpg",
+      "normal": "textures/normal.jpg",
+      "roughnessmetallic": "textures/roughnessmetallic.jpg"
+    }
+  }
+]

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shyanne Cay – Game Developer &amp; 3D Artist</title>
+<meta name="description" content="Portfolio of Shyanne Cay, a game developer and 3D artist from the Philippines: characters, environments and game-ready assets made in Blender." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@500;700&family=Silkscreen&display=swap" />
+<style>
+/*
+  VOICE   a game-menu portfolio: bold, playful, confident; a 3D artist's "press start"
+  IDEA    the page behaves like a game's front end: title screen, CRT model viewer, level select
+  PICTURE her real models in a CRT-framed viewer; pixel-block terrain between sections
+  COLOUR  near-black + molten orange slabs + acid lime lettering
+  TYPE    mixed titles (Instrument Serif italic caps + slanted Pixelify Sans), Silkscreen labels, Chakra Petch body
+*/
+:root {
+  color-scheme: dark;
+  --bg: #0a0a08; --bg2: #12120e; --panel: #1a1a14; --line: #3b392c;
+  --ink: #f2e8d7; --soft: #d6ccb6; --muted: #a39b84;
+  --orange: #a3292b; --orange-deep: #6b1a1c; --lime: #ccc285; --green: #557556; --green-deep: #24321f;
+  --night: #0a0a08; --accent: #a3292b; --accent-text: #d4554d; --card: #1a1a14;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --pixel: 'Pixelify Sans', 'Courier New', monospace;
+  --label: 'Silkscreen', 'Courier New', monospace;
+  --body: 'Chakra Petch', system-ui, sans-serif;
+  --display: 'Pixelify Sans', monospace;
+}
+* { box-sizing: border-box; min-width: 0; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  font: 16px/1.6 var(--body); color: var(--ink); background: var(--bg);
+  background-image: repeating-linear-gradient(to bottom, rgba(255,255,255,0.025) 0 1px, transparent 1px 4px);
+  overflow-x: clip;
+}
+a { color: inherit; }
+button, input { font: inherit; }
+:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+
+/* ---------- mixed title lettering ---------- */
+.mix { display: inline-block; position: relative; color: var(--lime); line-height: 1; padding: 0 0.35em; }
+.mix .w { white-space: nowrap; }
+.mix .sf { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 1.18em; letter-spacing: -0.01em; }
+.mix .px { font-family: var(--pixel); font-weight: 700; display: inline-block; transform: skewX(-12deg); letter-spacing: 0.02em; }
+.mix::before, .mix::after {   /* pixel sparks, like a cursor flicker */
+  content: ''; position: absolute; width: 0.12em; height: 0.12em; background: currentColor;
+}
+.mix::before { left: 0; bottom: 0.18em; box-shadow: 0.12em -0.12em 0 currentColor, 0.24em 0 0 currentColor, -0.12em 0.12em 0 currentColor; }
+.mix::after  { right: 0; top: 0.12em; box-shadow: -0.12em 0.12em 0 currentColor, 0.12em 0.24em 0 currentColor, 0 0.48em 0 currentColor; }
+h2.title { font-size: clamp(44px, 7vw, 84px); font-weight: 400; margin-bottom: 8px; }
+.label { font-family: var(--label); font-size: 13px; letter-spacing: 0.04em; color: var(--accent-text); }
+
+/* ---------- header ---------- */
+.site-header { position: sticky; top: 0; z-index: 20; background: rgba(10,10,8,0.92); backdrop-filter: blur(6px); border-bottom: 3px solid var(--orange); }
+.site-header .wrap { min-height: 68px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; padding-top: 8px; padding-bottom: 8px; }
+.logo { font: 700 26px/1 var(--pixel); color: var(--lime); text-decoration: none; transform: skewX(-12deg); display: inline-block; }
+.nav { display: flex; flex-wrap: wrap; gap: 4px 22px; font-family: var(--label); font-size: 13px; }
+.nav a { text-decoration: none; color: var(--soft); padding: 6px 0; border-bottom: 2px solid transparent; }
+.nav a:hover { color: var(--lime); border-color: var(--lime); }
+
+/* ---------- buttons (slanted) ---------- */
+.btn { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 22px;
+  font: 600 15px/1 var(--body); text-transform: uppercase; letter-spacing: 0.04em; text-decoration: none; cursor: pointer; border: 0;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); transition: transform .15s, filter .15s; }
+.btn.orange { background: var(--orange); color: #f2e8d7; }
+.btn.lime { background: var(--lime); color: #0a0a08; }
+.btn.ghost { background: var(--panel); color: var(--ink); box-shadow: inset 0 0 0 2px var(--line); }
+.btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.btn.static { cursor: default; color: var(--muted); }
+.btn.static:hover { transform: none; filter: none; }
+
+/* ---------- pixel terrain divider ---------- */
+.terrain { display: block; width: 100%; height: 72px; color: var(--orange); }
+.terrain.flip { transform: scaleY(-1); }
+.terrain.lime { color: var(--lime); opacity: 0.85; }
+.band { background: linear-gradient(var(--green), var(--green-deep) 70%, var(--bg)); }
+.band .label { color: var(--lime); }
+
+/* ---------- hero ---------- */
+.hero { display: flex; flex-wrap: wrap; align-items: center; gap: 40px; padding-top: 48px; padding-bottom: 48px; }
+.hero-text { flex: 1 1 340px; display: flex; flex-direction: column; gap: 14px; }
+.hello { font-size: clamp(64px, 9vw, 112px); }
+.hero-name { font: 700 clamp(26px, 3.4vw, 36px)/1.1 var(--body); }
+.hero-name em { font-family: var(--serif); font-weight: 400; color: var(--accent-text); font-size: 1.15em; }
+.tagbox { align-self: flex-start; font-family: var(--label); font-size: 13px; padding: 4px 12px; background: var(--orange); color: #f2e8d7; transform: skewX(-12deg); }
+.tagbox > span { display: inline-block; transform: skewX(12deg); }
+.lead { font-size: 18px; color: var(--soft); max-width: 520px; }
+.lead b { color: var(--lime); font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.facts { font-family: var(--label); font-size: 12px; color: var(--muted); }
+
+/* CRT bezel around the viewer */
+.crt { flex: 1 1 600px; max-width: 780px; padding: 16px 16px 22px; border-radius: 28px; background: linear-gradient(160deg, #3d3b2e, #1b1b15 60%); box-shadow: 0 0 0 3px #0a0a08, 0 0 0 6px var(--orange), 0 24px 60px rgba(163,41,43,0.22); position: relative; }
+.crt::after { content: 'SEJU·TV'; position: absolute; right: 26px; bottom: 4px; font-family: var(--label); font-size: 10px; color: #a39b84; }
+.viewer-card { border-radius: 16px; background: #090907; color: #fff; overflow: hidden; border: 2px solid #000; }
+.viewer-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.viewer-title { font: 700 18px/1.2 var(--pixel); color: var(--lime); }
+.viewer-title small { display: block; font: 400 13px/1.4 var(--body); color: var(--soft); }
+.mini { min-height: 40px; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 6px; border: 2px solid var(--ink); background: transparent; color: var(--ink); font-weight: 600; font-size: 14px; cursor: pointer; }
+.mini.subtle { border-color: var(--line); }
+.stage { position: relative; height: 440px; border-radius: 22px / 18px; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #2e3326 0%, #15170f 45%, #060605 100%); }
+.stage::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.035) 0 1px, transparent 1px 3px); border-radius: 0; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.stage canvas:active { cursor: grabbing; }
+.tools { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+.tool { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 8px; border: 1px solid #5c5844; background: rgba(10,10,8,0.8); color: #fff; cursor: pointer; }
+.tool[aria-pressed="true"] { background: var(--orange); color: #f2e8d7; border-color: var(--orange); }
+.channel-label { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 2; padding: 3px 12px; background: var(--lime); color: #0a0a08; font: 600 12px/1.4 var(--label); white-space: nowrap; pointer-events: none; }
+.hint { position: absolute; left: 12px; bottom: 10px; right: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 12.5px; color: var(--soft); pointer-events: none; z-index: 1; }
+.hint b { color: #fff; font-weight: 600; }
+.status { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; color: var(--soft); font-family: var(--label); font-size: 13px; pointer-events: none; text-align: center; padding: 20px; }
+.status[hidden] { display: none; }
+.dropzone { position: absolute; inset: 8px; z-index: 5; display: grid; place-items: center; border: 3px dashed var(--lime); background: rgba(10,10,8,0.85); font: 700 20px/1.3 var(--pixel); color: var(--lime); pointer-events: none; }
+.dropzone[hidden] { display: none; }
+
+/* compact inspector */
+.bar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 12px; }
+.dd { position: relative; }
+.dd-btn { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px 0 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+.dd-btn:hover { border-color: #6f6a55; }
+.dd-btn[aria-expanded="true"] { border-color: var(--lime); }
+.dd-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.dd-k { color: var(--soft); font-weight: 500; }
+.chev { transition: transform .15s; }
+.menu { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 10; width: 250px; max-width: calc(100vw - 48px); max-height: 400px; overflow-y: auto; padding: 8px; border-radius: 10px; border: 1px solid var(--line); background: #11110d; box-shadow: 0 14px 34px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 6px; }
+.menu[hidden] { display: none; }
+.menu.wide { width: 320px; padding: 12px; }
+#inspector { width: 440px; display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "render mat" "geo mat" "uv mat"; gap: 2px 10px; align-content: start; }
+#inspector[hidden] { display: none; }
+#inspector .group:nth-child(1) { grid-area: render; }
+#inspector .group:nth-child(2) { grid-area: mat; }
+#inspector .group:nth-child(3) { grid-area: geo; }
+#inspector .group:nth-child(4) { grid-area: uv; }
+.group { display: flex; flex-direction: column; gap: 2px; }
+.grp { font-family: var(--label); font-size: 11px; color: var(--accent-text); padding: 6px 6px 2px; }
+.row-btns { display: flex; flex-direction: column; gap: 2px; }
+.mode { width: 100%; min-height: 38px; display: flex; align-items: center; gap: 10px; padding: 0 8px; border-radius: 6px; border: 0; background: transparent; color: #fff; font-size: 14px; text-align: left; cursor: pointer; }
+.mode:hover { background: rgba(255,255,255,0.08); }
+.mode[aria-pressed="true"] { background: var(--lime); color: #0a0a08; font-weight: 600; }
+.ic { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; }
+.ic-final { background: radial-gradient(circle at 35% 35%, #fff, #a39b84 60%, #2c2b20); }
+.ic-clay { background: radial-gradient(circle at 35% 35%, #f3e4d2, #b79d80 70%); }
+.ic-base { background: conic-gradient(#e85d5d, #e0a526, #3f8f4e, #4a78d6, #9a7fd1, #e85d5d); }
+.ic-normal { background: radial-gradient(circle at 35% 35%, #c9b8ff, #7f7fff 60%, #4a3fd1); }
+.ic-rough { background: repeating-conic-gradient(#d0d0d0 0 25%, #6a6a6a 0 50%) 0 0 / 6px 6px; }
+.ic-metal { background: linear-gradient(135deg, #fafafa, #8a8a8a 50%, #e6e6e6 70%, #555); }
+.ic-emit { background: radial-gradient(circle, #ffd27a, #a3292b 55%, #3a1a08); }
+.ic-wire { border-radius: 3px; background: linear-gradient(45deg, transparent 44%, currentColor 44% 56%, transparent 56%); }
+.ic-vnorm { border-radius: 3px; background: repeating-linear-gradient(90deg, transparent 0 3px, #7fd1b9 3px 4.5px); }
+.ic-uv { border-radius: 3px; background: repeating-conic-gradient(#fff 0 25%, #25241b 0 50%) 0 0 / 8px 8px; }
+.material-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.material-head span { font: 700 16px/1.2 var(--pixel); color: var(--lime); }
+.mat-note { font-size: 12.5px; color: var(--soft); margin: 0 0 4px; }
+.sliders { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.slider { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 10px; font-size: 14px; }
+.slider output { font-variant-numeric: tabular-nums; color: var(--soft); font-size: 13px; }
+.slider input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--orange); min-height: 26px; }
+.slider input[type=color] { width: 44px; height: 32px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); padding: 2px; cursor: pointer; }
+.stats { margin-left: auto; display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 12.5px; color: var(--soft); }
+.stats b { color: var(--lime); font-weight: 600; font-variant-numeric: tabular-nums; }
+.toast { padding: 0 16px; font-size: 13px; color: var(--lime); }
+.toast:not(:empty) { padding-bottom: 12px; }
+
+/* ---------- sections ---------- */
+.section { padding-top: 56px; padding-bottom: 72px; }
+.section-head { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 28px; }
+.intro { font-size: 17px; color: var(--soft); max-width: 640px; }
+.intro a { color: var(--lime); font-weight: 600; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags span { padding: 1px 9px; border: 1px solid var(--line); font-size: 12.5px; color: var(--soft); background: rgba(255,255,255,0.03); }
+
+/* 3D models gallery (tiles rendered by viewer.js) */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 22px; }
+.card.tile { display: flex; flex-direction: column; overflow: hidden; text-align: left; color: var(--ink); cursor: pointer; padding: 0; border: 2px solid var(--line); background: var(--panel); transition: transform .15s, border-color .15s; clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%); }
+.card.tile:hover { transform: translateY(-3px); border-color: var(--orange); }
+.card.tile[aria-pressed="true"] { border-color: var(--lime); }
+.thumb { position: relative; aspect-ratio: 4 / 3; background: radial-gradient(ellipse at 50% 45%, #2e3326, #0a0a08); color: var(--muted); display: grid; place-items: center; }
+.thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.now { position: absolute; left: 10px; top: 10px; padding: 2px 10px; background: var(--lime); color: #0a0a08; font: 600 11px/1.6 var(--label); }
+.now[hidden] { display: none; }
+.tile-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.tile-body strong { font: 700 18px/1.2 var(--pixel); }
+.tile-body small { color: var(--soft); font-size: 13px; }
+.empty { padding: 20px; color: var(--muted); font-family: var(--label); font-size: 13px; }
+
+/* selected work */
+.works { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 22px; }
+.work { background: var(--panel); border: 2px solid var(--line); display: flex; flex-direction: column; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%); transition: border-color .15s; }
+.work:hover { border-color: var(--orange); }
+.work-thumb { position: relative; aspect-ratio: 4 / 3; display: grid; place-items: center; color: var(--muted); background: repeating-linear-gradient(45deg, #14140f 0 12px, #18180f 12px 24px); }
+.work-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.work-body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+.work-body strong { font: 700 18px/1.2 var(--pixel); color: var(--ink); }
+.work-body small { color: var(--soft); font-size: 13px; }
+
+/* games: level select */
+.levels { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(560px, 100%), 1fr)); gap: 20px; }
+.level { display: grid; grid-template-columns: minmax(0, 42%) minmax(0, 1fr); background: linear-gradient(100deg, #1c1c16, #14140f); border: 2px solid var(--line); clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%); transition: border-color .15s, transform .15s; }
+.level:hover { border-color: var(--lime); transform: translateX(4px); }
+.level:first-child { border-color: var(--orange); }
+.level-thumb { position: relative; min-height: 180px; display: grid; place-items: center; color: var(--muted); background: #11110d; overflow: hidden; }
+.level-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.level-body { padding: 16px 22px 18px 18px; display: flex; flex-direction: column; gap: 6px; }
+.level-meta { font-family: var(--label); font-size: 11.5px; color: var(--accent-text); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.level-meta .num { color: var(--lime); }
+.new { padding: 1px 8px; background: var(--lime); color: #0a0a08; }
+.level h3 { font: 700 26px/1.1 var(--pixel); color: var(--ink); transform: skewX(-8deg); transform-origin: left; }
+.level p { color: var(--soft); font-size: 14.5px; }
+.level .role { color: var(--ink); }
+.level .role strong { font-family: var(--label); font-size: 11px; color: var(--accent-text); margin-right: 6px; }
+.level-foot { margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.level-foot .btn { min-height: 40px; padding: 0 18px; font-size: 13px; }
+
+/* toolkit */
+.tool-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 28px; align-items: start; }
+.software { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 14px; }
+.tool-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.tile-ic { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 16px; background: #000; border: 2px solid var(--c); color: var(--c); font: 700 26px/1 var(--pixel); box-shadow: 4px 4px 0 var(--c); }
+.tile-name { font-size: 13px; color: var(--soft); }
+.skill-panels { display: grid; gap: 14px; }
+.skill { background: var(--panel); border-left: 6px solid var(--orange); padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+.skill h3 { font: 700 20px/1.2 var(--pixel); color: var(--lime); }
+.skill p { font-size: 13.5px; color: var(--muted); }
+
+/* about */
+.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+.about-text { display: flex; flex-direction: column; gap: 14px; }
+.about-text p { font-size: 17px; color: var(--soft); }
+.panel { background: var(--panel); border: 2px solid var(--line); padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%); }
+.entry { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 2px 14px; }
+.entry > span:first-child { font-family: var(--label); font-size: 12px; color: var(--lime); padding-top: 3px; }
+.entry strong { color: var(--ink); }
+.entry .note { grid-column: 2; color: var(--muted); font-size: 14px; }
+
+/* contact */
+.contact { background: linear-gradient(180deg, #24321f, var(--bg) 60%); }
+.contact .wrap { padding-top: 40px; padding-bottom: 40px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px 48px; align-items: center; }
+.contact p { color: var(--soft); max-width: 420px; }
+.ribbons { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.ribbons li:nth-child(odd) { transform: translateX(-14px) rotate(-1.5deg); }
+.ribbons li:nth-child(even) { transform: translateX(10px) rotate(1deg); }
+.ribbon { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 22px; background: #f2e8d7; color: #0a0a08; text-decoration: none; font-weight: 600; clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%); box-shadow: 6px 6px 0 var(--orange); transition: background .15s; overflow-wrap: anywhere; }
+.ribbon:hover { background: var(--lime); }
+.ribbon.static { cursor: default; }
+.ribbon.static:hover { background: #f2e8d7; }
+.rib-ic { flex: none; width: 34px; height: 34px; display: grid; place-items: center; background: #0a0a08; color: var(--lime); }
+.footer-note { text-align: center; padding: 18px; font-family: var(--label); font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); }
+
+@media (max-width: 900px) {
+  .tool-grid, .about, .contact .wrap { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .wrap { padding: 0 16px; }
+  .crt { padding: 10px 10px 18px; border-radius: 20px; }
+  .stage { height: 340px; }
+  .hint .wide { display: none; }
+  .stats { margin-left: 0; width: 100%; }
+  .hide-sm { display: none; }
+  .dd-k { display: none; }
+  .dd { position: static; }
+  .menu, .menu.wide, #inspector { left: 12px; right: 12px; width: auto; max-width: none; max-height: 330px; }
+  #inspector { display: flex; flex-direction: column; }
+  .site-header .btn { display: none; }
+  .nav { gap: 0 12px; font-size: 11.5px; }
+  html { scroll-padding-top: 100px; }
+  .level { grid-template-columns: 1fr; clip-path: none; }
+  .level-thumb { min-height: 0; aspect-ratio: 4 / 3; }
+  .ribbons li:nth-child(odd), .ribbons li:nth-child(even) { transform: none; }
+  .terrain { height: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .level, .card.tile, .work { transition: none; }
+  .level:hover, .card.tile:hover, .btn:hover { transform: none; }
+}
+
+/* ---------- whole-page fish-eye lens ---------- */
+#lens { background: var(--bg); background-image: repeating-linear-gradient(to bottom, rgba(255,255,255,0.025) 0 1px, transparent 1px 4px); }
+html.lens-on { background: #000; scroll-behavior: auto; }
+html.lens-on body { height: 100%; overflow: hidden; background: #000; }
+html.lens-on #lens {
+  position: fixed; inset: 0; overflow-x: hidden; overflow-y: auto;
+  scroll-behavior: smooth; scroll-padding-top: 84px; overscroll-behavior: contain;
+  filter: url(#fisheye-page); scrollbar-width: none;
+}
+html.lens-on #lens::-webkit-scrollbar { display: none; }
+#lens-glass { display: none; }
+html.lens-on #lens-glass {
+  display: block; position: fixed; inset: 0; z-index: 40; pointer-events: none; border-radius: 3vmin;
+  background: radial-gradient(ellipse 75% 70% at 50% 48%, transparent 58%, rgba(0,0,0,0.38) 88%, rgba(0,0,0,0.75) 100%);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.04), inset 0 0 6vmin rgba(0,0,0,0.55);
+}
+.lens-toggle {
+  position: fixed; right: 14px; bottom: 14px; z-index: 50; display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border: 2px solid var(--orange); border-radius: 0; background: rgba(10,10,8,0.92); color: var(--ink);
+  font: 11px/1 var(--label); letter-spacing: 0.08em; cursor: pointer; box-shadow: 3px 3px 0 var(--orange-deep);
+}
+.lens-toggle:hover { border-color: var(--lime); }
+.lt-track { position: relative; width: 38px; height: 18px; background: #2a291f; border: 2px solid var(--line); transition: background .18s, border-color .18s; }
+.lt-knob { position: absolute; top: 1px; left: 1px; width: 12px; height: 12px; background: var(--muted); transition: transform .18s, background .18s; }
+.lens-toggle[aria-checked="true"] .lt-track { background: var(--orange-deep); border-color: var(--orange); }
+.lens-toggle[aria-checked="true"] .lt-knob { transform: translateX(20px); background: var(--lime); }
+.lt-state { width: 3ch; color: var(--muted); }
+.lens-toggle[aria-checked="true"] .lt-state { color: var(--lime); }
+@media (prefers-reduced-motion: reduce) { .lt-track, .lt-knob { transition: none; } }
+@media (max-width: 700px) {
+  html.lens-on #lens { scroll-padding-top: 100px; }
+  .lens-toggle { right: 10px; bottom: 10px; padding: 7px 10px; }
+}
+@media (prefers-reduced-motion: reduce) { html.lens-on #lens { scroll-behavior: auto; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="pix" viewBox="0 0 1440 192" fill="currentColor"><rect x="0" y="168" width="24" height="24"/><rect x="0" y="144" width="24" height="24"/><rect x="0" y="120" width="24" height="24"/><rect x="0" y="96" width="24" height="24"/><rect x="0" y="72" width="24" height="24"/><rect x="0" y="48" width="24" height="24"/><rect x="24" y="168" width="24" height="24"/><rect x="24" y="144" width="24" height="24"/><rect x="24" y="120" width="24" height="24"/><rect x="24" y="96" width="24" height="24"/><rect x="24" y="72" width="24" height="24"/><rect x="24" y="48" width="24" height="24"/><rect x="24" y="24" width="24" height="24"/><rect x="48" y="168" width="24" height="24"/><rect x="48" y="144" width="24" height="24"/><rect x="48" y="120" width="24" height="24"/><rect x="48" y="96" width="24" height="24"/><rect x="48" y="72" width="24" height="24"/><rect x="48" y="48" width="24" height="24"/><rect x="72" y="168" width="24" height="24"/><rect x="72" y="144" width="24" height="24"/><rect x="72" y="120" width="24" height="24"/><rect x="72" y="96" width="24" height="24"/><rect x="72" y="72" width="24" height="24"/><rect x="72" y="48" width="24" height="24"/><rect x="96" y="168" width="24" height="24"/><rect x="96" y="144" width="24" height="24"/><rect x="96" y="120" width="24" height="24"/><rect x="96" y="96" width="24" height="24"/><rect x="96" y="72" width="24" height="24"/><rect x="96" y="48" width="24" height="24"/><rect x="96" y="24" width="24" height="24"/><rect x="120" y="168" width="24" height="24"/><rect x="120" y="144" width="24" height="24"/><rect x="120" y="120" width="24" height="24"/><rect x="120" y="96" width="24" height="24"/><rect x="120" y="72" width="24" height="24"/><rect x="120" y="48" width="24" height="24"/><rect x="120" y="24" width="24" height="24"/><rect x="120" y="-48" width="24" height="24" opacity="0.55"/><rect x="144" y="168" width="24" height="24"/><rect x="144" y="144" width="24" height="24"/><rect x="144" y="120" width="24" height="24"/><rect x="144" y="96" width="24" height="24"/><rect x="144" y="72" width="24" height="24"/><rect x="144" y="48" width="24" height="24"/><rect x="144" y="24" width="24" height="24"/><rect x="144" y="0" width="24" height="24"/><rect x="144" y="-24" width="24" height="24"/><rect x="144" y="-72" width="24" height="24" opacity="0.55"/><rect x="168" y="168" width="24" height="24"/><rect x="168" y="144" width="24" height="24"/><rect x="168" y="120" width="24" height="24"/><rect x="168" y="96" width="24" height="24"/><rect x="168" y="72" width="24" height="24"/><rect x="168" y="48" width="24" height="24"/><rect x="168" y="24" width="24" height="24"/><rect x="168" y="0" width="24" height="24"/><rect x="168" y="-24" width="24" height="24"/><rect x="168" y="-120" width="24" height="24" opacity="0.55"/><rect x="192" y="168" width="24" height="24"/><rect x="192" y="144" width="24" height="24"/><rect x="192" y="120" width="24" height="24"/><rect x="192" y="96" width="24" height="24"/><rect x="192" y="72" width="24" height="24"/><rect x="192" y="48" width="24" height="24"/><rect x="192" y="24" width="24" height="24"/><rect x="216" y="168" width="24" height="24"/><rect x="216" y="144" width="24" height="24"/><rect x="216" y="120" width="24" height="24"/><rect x="216" y="96" width="24" height="24"/><rect x="216" y="72" width="24" height="24"/><rect x="216" y="48" width="24" height="24"/><rect x="216" y="24" width="24" height="24"/><rect x="240" y="168" width="24" height="24"/><rect x="240" y="144" width="24" height="24"/><rect x="240" y="120" width="24" height="24"/><rect x="240" y="96" width="24" height="24"/><rect x="240" y="72" width="24" height="24"/><rect x="240" y="48" width="24" height="24"/><rect x="240" y="24" width="24" height="24"/><rect x="240" y="0" width="24" height="24"/><rect x="240" y="-24" width="24" height="24"/><rect x="240" y="-72" width="24" height="24" opacity="0.55"/><rect x="264" y="168" width="24" height="24"/><rect x="264" y="144" width="24" height="24"/><rect x="264" y="120" width="24" height="24"/><rect x="264" y="96" width="24" height="24"/><rect x="264" y="72" width="24" height="24"/><rect x="264" y="48" width="24" height="24"/><rect x="264" y="24" width="24" height="24"/><rect x="288" y="168" width="24" height="24"/><rect x="288" y="144" width="24" height="24"/><rect x="288" y="120" width="24" height="24"/><rect x="288" y="96" width="24" height="24"/><rect x="288" y="72" width="24" height="24"/><rect x="288" y="48" width="24" height="24"/><rect x="288" y="24" width="24" height="24"/><rect x="288" y="-24" width="24" height="24" opacity="0.55"/><rect x="312" y="168" width="24" height="24"/><rect x="312" y="144" width="24" height="24"/><rect x="312" y="120" width="24" height="24"/><rect x="312" y="96" width="24" height="24"/><rect x="312" y="72" width="24" height="24"/><rect x="312" y="48" width="24" height="24"/><rect x="336" y="168" width="24" height="24"/><rect x="336" y="144" width="24" height="24"/><rect x="336" y="120" width="24" height="24"/><rect x="336" y="96" width="24" height="24"/><rect x="336" y="72" width="24" height="24"/><rect x="336" y="48" width="24" height="24"/><rect x="336" y="-48" width="24" height="24" opacity="0.55"/><rect x="360" y="168" width="24" height="24"/><rect x="360" y="144" width="24" height="24"/><rect x="360" y="120" width="24" height="24"/><rect x="360" y="96" width="24" height="24"/><rect x="360" y="72" width="24" height="24"/><rect x="384" y="168" width="24" height="24"/><rect x="384" y="144" width="24" height="24"/><rect x="384" y="120" width="24" height="24"/><rect x="384" y="96" width="24" height="24"/><rect x="408" y="168" width="24" height="24"/><rect x="408" y="144" width="24" height="24"/><rect x="408" y="120" width="24" height="24"/><rect x="408" y="96" width="24" height="24"/><rect x="432" y="168" width="24" height="24"/><rect x="432" y="144" width="24" height="24"/><rect x="432" y="120" width="24" height="24"/><rect x="432" y="96" width="24" height="24"/><rect x="432" y="72" width="24" height="24"/><rect x="456" y="168" width="24" height="24"/><rect x="456" y="144" width="24" height="24"/><rect x="456" y="120" width="24" height="24"/><rect x="456" y="96" width="24" height="24"/><rect x="456" y="72" width="24" height="24"/><rect x="480" y="168" width="24" height="24"/><rect x="480" y="144" width="24" height="24"/><rect x="480" y="120" width="24" height="24"/><rect x="480" y="96" width="24" height="24"/><rect x="504" y="168" width="24" height="24"/><rect x="504" y="144" width="24" height="24"/><rect x="528" y="168" width="24" height="24"/><rect x="528" y="144" width="24" height="24"/><rect x="528" y="72" width="24" height="24" opacity="0.55"/><rect x="552" y="168" width="24" height="24"/><rect x="552" y="144" width="24" height="24"/><rect x="552" y="120" width="24" height="24"/><rect x="552" y="96" width="24" height="24"/><rect x="576" y="168" width="24" height="24"/><rect x="576" y="144" width="24" height="24"/><rect x="576" y="120" width="24" height="24"/><rect x="576" y="96" width="24" height="24"/><rect x="576" y="48" width="24" height="24" opacity="0.55"/><rect x="600" y="168" width="24" height="24"/><rect x="600" y="144" width="24" height="24"/><rect x="624" y="168" width="24" height="24"/><rect x="624" y="144" width="24" height="24"/><rect x="648" y="168" width="24" height="24"/><rect x="648" y="144" width="24" height="24"/><rect x="672" y="168" width="24" height="24"/><rect x="672" y="144" width="24" height="24"/><rect x="672" y="120" width="24" height="24"/><rect x="672" y="96" width="24" height="24"/><rect x="672" y="72" width="24" height="24"/><rect x="672" y="-24" width="24" height="24" opacity="0.55"/><rect x="696" y="168" width="24" height="24"/><rect x="696" y="144" width="24" height="24"/><rect x="696" y="120" width="24" height="24"/><rect x="720" y="168" width="24" height="24"/><rect x="720" y="144" width="24" height="24"/><rect x="720" y="120" width="24" height="24"/><rect x="720" y="96" width="24" height="24"/><rect x="720" y="72" width="24" height="24"/><rect x="720" y="0" width="24" height="24" opacity="0.55"/><rect x="744" y="168" width="24" height="24"/><rect x="744" y="144" width="24" height="24"/><rect x="744" y="120" width="24" height="24"/><rect x="744" y="96" width="24" height="24"/><rect x="744" y="72" width="24" height="24"/><rect x="744" y="48" width="24" height="24"/><rect x="768" y="168" width="24" height="24"/><rect x="768" y="144" width="24" height="24"/><rect x="768" y="120" width="24" height="24"/><rect x="768" y="96" width="24" height="24"/><rect x="768" y="72" width="24" height="24"/><rect x="768" y="48" width="24" height="24"/><rect x="768" y="24" width="24" height="24"/><rect x="768" y="-24" width="24" height="24" opacity="0.55"/><rect x="792" y="168" width="24" height="24"/><rect x="792" y="144" width="24" height="24"/><rect x="792" y="120" width="24" height="24"/><rect x="792" y="96" width="24" height="24"/><rect x="792" y="72" width="24" height="24"/><rect x="792" y="48" width="24" height="24"/><rect x="816" y="168" width="24" height="24"/><rect x="816" y="144" width="24" height="24"/><rect x="816" y="120" width="24" height="24"/><rect x="816" y="96" width="24" height="24"/><rect x="816" y="72" width="24" height="24"/><rect x="816" y="48" width="24" height="24"/><rect x="816" y="-48" width="24" height="24" opacity="0.55"/><rect x="840" y="168" width="24" height="24"/><rect x="840" y="144" width="24" height="24"/><rect x="840" y="120" width="24" height="24"/><rect x="840" y="96" width="24" height="24"/><rect x="840" y="72" width="24" height="24"/><rect x="840" y="48" width="24" height="24"/><rect x="840" y="24" width="24" height="24"/><rect x="864" y="168" width="24" height="24"/><rect x="864" y="144" width="24" height="24"/><rect x="864" y="120" width="24" height="24"/><rect x="864" y="96" width="24" height="24"/><rect x="864" y="72" width="24" height="24"/><rect x="864" y="48" width="24" height="24"/><rect x="864" y="24" width="24" height="24"/><rect x="864" y="0" width="24" height="24"/><rect x="864" y="-24" width="24" height="24"/><rect x="864" y="-96" width="24" height="24" opacity="0.55"/><rect x="888" y="168" width="24" height="24"/><rect x="888" y="144" width="24" height="24"/><rect x="888" y="120" width="24" height="24"/><rect x="888" y="96" width="24" height="24"/><rect x="888" y="72" width="24" height="24"/><rect x="888" y="48" width="24" height="24"/><rect x="888" y="24" width="24" height="24"/><rect x="888" y="0" width="24" height="24"/><rect x="888" y="-72" width="24" height="24" opacity="0.55"/><rect x="912" y="168" width="24" height="24"/><rect x="912" y="144" width="24" height="24"/><rect x="912" y="120" width="24" height="24"/><rect x="912" y="96" width="24" height="24"/><rect x="912" y="72" width="24" height="24"/><rect x="912" y="48" width="24" height="24"/><rect x="912" y="24" width="24" height="24"/><rect x="912" y="0" width="24" height="24"/><rect x="912" y="-48" width="24" height="24" opacity="0.55"/><rect x="936" y="168" width="24" height="24"/><rect x="936" y="144" width="24" height="24"/><rect x="936" y="120" width="24" height="24"/><rect x="936" y="96" width="24" height="24"/><rect x="936" y="72" width="24" height="24"/><rect x="936" y="48" width="24" height="24"/><rect x="936" y="24" width="24" height="24"/><rect x="936" y="0" width="24" height="24"/><rect x="936" y="-24" width="24" height="24"/><rect x="936" y="-96" width="24" height="24" opacity="0.55"/><rect x="960" y="168" width="24" height="24"/><rect x="960" y="144" width="24" height="24"/><rect x="960" y="120" width="24" height="24"/><rect x="960" y="96" width="24" height="24"/><rect x="960" y="72" width="24" height="24"/><rect x="960" y="48" width="24" height="24"/><rect x="960" y="24" width="24" height="24"/><rect x="984" y="168" width="24" height="24"/><rect x="984" y="144" width="24" height="24"/><rect x="984" y="120" width="24" height="24"/><rect x="984" y="96" width="24" height="24"/><rect x="984" y="72" width="24" height="24"/><rect x="984" y="48" width="24" height="24"/><rect x="984" y="24" width="24" height="24"/><rect x="984" y="0" width="24" height="24"/><rect x="984" y="-24" width="24" height="24"/><rect x="1008" y="168" width="24" height="24"/><rect x="1008" y="144" width="24" height="24"/><rect x="1008" y="120" width="24" height="24"/><rect x="1008" y="96" width="24" height="24"/><rect x="1008" y="72" width="24" height="24"/><rect x="1008" y="48" width="24" height="24"/><rect x="1008" y="24" width="24" height="24"/><rect x="1008" y="0" width="24" height="24"/><rect x="1008" y="-24" width="24" height="24"/><rect x="1008" y="-96" width="24" height="24" opacity="0.55"/><rect x="1032" y="168" width="24" height="24"/><rect x="1032" y="144" width="24" height="24"/><rect x="1032" y="120" width="24" height="24"/><rect x="1032" y="96" width="24" height="24"/><rect x="1032" y="72" width="24" height="24"/><rect x="1032" y="48" width="24" height="24"/><rect x="1032" y="24" width="24" height="24"/><rect x="1032" y="0" width="24" height="24"/><rect x="1032" y="-24" width="24" height="24"/><rect x="1056" y="168" width="24" height="24"/><rect x="1056" y="144" width="24" height="24"/><rect x="1056" y="120" width="24" height="24"/><rect x="1056" y="96" width="24" height="24"/><rect x="1056" y="72" width="24" height="24"/><rect x="1056" y="48" width="24" height="24"/><rect x="1080" y="168" width="24" height="24"/><rect x="1080" y="144" width="24" height="24"/><rect x="1080" y="120" width="24" height="24"/><rect x="1080" y="96" width="24" height="24"/><rect x="1080" y="72" width="24" height="24"/><rect x="1080" y="48" width="24" height="24"/><rect x="1080" y="24" width="24" height="24"/><rect x="1104" y="168" width="24" height="24"/><rect x="1104" y="144" width="24" height="24"/><rect x="1104" y="120" width="24" height="24"/><rect x="1104" y="96" width="24" height="24"/><rect x="1104" y="72" width="24" height="24"/><rect x="1104" y="48" width="24" height="24"/><rect x="1128" y="168" width="24" height="24"/><rect x="1128" y="144" width="24" height="24"/><rect x="1128" y="120" width="24" height="24"/><rect x="1128" y="96" width="24" height="24"/><rect x="1128" y="72" width="24" height="24"/><rect x="1128" y="48" width="24" height="24"/><rect x="1128" y="24" width="24" height="24"/><rect x="1152" y="168" width="24" height="24"/><rect x="1152" y="144" width="24" height="24"/><rect x="1152" y="120" width="24" height="24"/><rect x="1152" y="96" width="24" height="24"/><rect x="1152" y="48" width="24" height="24" opacity="0.55"/><rect x="1176" y="168" width="24" height="24"/><rect x="1176" y="144" width="24" height="24"/><rect x="1176" y="120" width="24" height="24"/><rect x="1200" y="168" width="24" height="24"/><rect x="1200" y="144" width="24" height="24"/><rect x="1200" y="120" width="24" height="24"/><rect x="1224" y="168" width="24" height="24"/><rect x="1224" y="144" width="24" height="24"/><rect x="1224" y="96" width="24" height="24" opacity="0.55"/><rect x="1248" y="168" width="24" height="24"/><rect x="1248" y="144" width="24" height="24"/><rect x="1272" y="168" width="24" height="24"/><rect x="1272" y="144" width="24" height="24"/><rect x="1272" y="120" width="24" height="24"/><rect x="1296" y="168" width="24" height="24"/><rect x="1296" y="144" width="24" height="24"/><rect x="1296" y="120" width="24" height="24"/><rect x="1320" y="168" width="24" height="24"/><rect x="1320" y="144" width="24" height="24"/><rect x="1344" y="168" width="24" height="24"/><rect x="1344" y="144" width="24" height="24"/><rect x="1344" y="120" width="24" height="24"/><rect x="1344" y="96" width="24" height="24"/><rect x="1368" y="168" width="24" height="24"/><rect x="1368" y="144" width="24" height="24"/><rect x="1368" y="120" width="24" height="24"/><rect x="1368" y="96" width="24" height="24"/><rect x="1368" y="0" width="24" height="24" opacity="0.55"/><rect x="1392" y="168" width="24" height="24"/><rect x="1392" y="144" width="24" height="24"/><rect x="1392" y="120" width="24" height="24"/><rect x="1392" y="96" width="24" height="24"/><rect x="1392" y="48" width="24" height="24" opacity="0.55"/><rect x="1416" y="168" width="24" height="24"/><rect x="1416" y="144" width="24" height="24"/></symbol></defs></svg>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="fisheye-page" x="0" y="0" width="1" height="1" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feImage id="lens-map" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="map"/><feDisplacementMap id="lens-disp" in="SourceGraphic" in2="map" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<button class="lens-toggle" id="lens-toggle" type="button" role="switch" aria-checked="false" aria-pressed="false" title="Turn the fish-eye lens on or off"><span class="lt-label">FISH-EYE</span><span class="lt-track" aria-hidden="true"><span class="lt-knob"></span></span><span class="lt-state">OFF</span></button>
+<div id="lens-glass" aria-hidden="true"></div>
+<div id="lens">
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#top">SHYANNE</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#gallery">3D Models</a><a href="#work">Work</a><a href="#projects">Games</a><a href="#toolkit">Toolkit</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+    <a class="btn orange" href="mailto:shyanne.kimberly.cay@gmail.com">Email me</a>
+  </div>
+</header>
+
+<main>
+  <section id="top" class="wrap hero">
+    <div class="hero-text">
+      <p class="label">PORTFOLIO 2026 · GAME &amp; 3D ARTIST</p>
+      <h1 class="hello"><span class="mix " aria-label="Hello!"><span aria-hidden="true"><span class="w"><span class="sf">H</span><span class="px">ello!</span></span></span></span></h1>
+      <p class="hero-name">I'm <em>Shyanne Cay</em></p>
+      <span class="tagbox"><span>Blender specialist</span></span>
+      <p class="lead">A game developer with a strong focus on <b>3D art</b>: characters, environments and optimised, <b>game-ready assets</b>. I bring concepts to life with detailed visuals while keeping performance and gameplay in mind.</p>
+      <div class="actions">
+        <a class="btn lime" href="#projects">Press start ▶</a>
+        <a class="btn ghost" href="#contact">Contact</a>
+      </div>
+      <p class="facts">PHILIPPINES · OPEN TO 3D ARTIST ROLES</p>
+    </div>
+
+    <div class="crt">
+    <div class="viewer-card" id="viewer">
+      <div class="viewer-head">
+        <p class="viewer-title"><span id="model-name">Model viewer</span><small id="model-sub">Orbit it like in Blender</small></p>
+      </div>
+
+      <div class="stage" id="stage">
+        <p class="status" id="status">Loading 3D viewer…</p>
+        <p class="channel-label" id="channel-label" hidden></p>
+        <div class="tools">
+          <button class="tool" id="reset" type="button" aria-label="Reset view" title="Reset view">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          </button>
+          <button class="tool" id="spin" type="button" aria-label="Auto-rotate" title="Auto-rotate" aria-pressed="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4"/><path d="M12 8v8"/><path d="m18 14 3-2-3-2"/></svg>
+          </button>
+          
+          <button class="tool" id="full" type="button" aria-label="Fullscreen" title="Fullscreen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+          </button>
+        </div>
+        <p class="hint"><span><b>Drag</b> orbit · <b>Scroll / pinch</b> zoom</span><span class="wide"><b>Right-drag</b> pan</span></p>
+        <div class="dropzone" id="dropzone" hidden><span>Drop a .glb / .fbx and texture maps</span></div>
+      </div>
+
+      <div class="bar">
+        <div class="dd">
+          <button type="button" class="dd-btn" id="view-btn" aria-expanded="false" aria-controls="inspector">
+            <i class="ic ic-final" id="view-ic"></i><span><span class="dd-k">View:</span> <span id="view-label">Final render</span></span>
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+          </button>
+          <div class="menu" id="inspector" role="group" aria-label="Model inspector" hidden>
+            <div class="group">
+          <p class="grp">Render</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-mode="final" aria-pressed="true"><i class="ic ic-final"></i>Final render</button>
+            <button type="button" class="mode" data-mode="clay" aria-pressed="false"><i class="ic ic-clay"></i>Clay</button>
+          </div>
+        </div>
+        <div class="group">
+          <p class="grp">Material channels</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-mode="base" aria-pressed="false"><i class="ic ic-base"></i>Base Color</button>
+            <button type="button" class="mode" data-mode="normal" aria-pressed="false"><i class="ic ic-normal"></i>Normal Map</button>
+            <button type="button" class="mode" data-mode="roughness" aria-pressed="false"><i class="ic ic-rough"></i>Roughness</button>
+            <button type="button" class="mode" data-mode="metallic" aria-pressed="false"><i class="ic ic-metal"></i>Metallic</button>
+            <button type="button" class="mode" data-mode="emission" aria-pressed="false"><i class="ic ic-emit"></i>Emission</button>
+          </div>
+        </div>
+        <div class="group">
+          <p class="grp">Geometry</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-toggle="wire" aria-pressed="false"><i class="ic ic-wire"></i>Wireframe</button>
+            <button type="button" class="mode" data-toggle="normals" aria-pressed="false"><i class="ic ic-vnorm"></i>Vertex normals</button>
+          </div>
+        </div>
+        <div class="group">
+          <p class="grp">UV</p>
+          <div class="row-btns">
+            <button type="button" class="mode" data-mode="uv" aria-pressed="false"><i class="ic ic-uv"></i>UV checker</button>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="dd">
+          <button type="button" class="dd-btn" id="mat-btn" aria-expanded="false" aria-controls="mat-menu">
+            <i class="ic ic-metal"></i><span>Material</span>
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+          </button>
+          <div class="menu wide" id="mat-menu" hidden>
+            <div class="material-head">
+              <span>Material</span>
+              <button type="button" class="mini subtle" id="mat-reset">Reset</button>
+            </div>
+            <p class="mat-note">Changes apply to the whole model. Where a texture map exists, the slider scales it.</p>
+            <div class="sliders">
+          <label class="slider" for="s-tint">Base colour tint <input id="s-tint" type="color" value="#ffffff" /></label>
+          <label class="slider" for="s-rough">Roughness <output id="o-rough" for="s-rough">1.00</output><input id="s-rough" type="range" min="0" max="1" step="0.01" value="1" /></label>
+          <label class="slider" for="s-metal">Metallic <output id="o-metal" for="s-metal">1.00</output><input id="s-metal" type="range" min="0" max="1" step="0.01" value="1" /></label>
+          <label class="slider" for="s-normal">Normal strength <output id="o-normal" for="s-normal">1.00</output><input id="s-normal" type="range" min="0" max="3" step="0.05" value="1" /></label>
+          <label class="slider" for="s-emit">Emission strength <output id="o-emit" for="s-emit">1.00</output><input id="s-emit" type="range" min="0" max="5" step="0.05" value="1" /></label>
+        </div>
+          </div>
+        </div>
+        <p class="stats" aria-live="polite"><span><b id="st-tris">–</b> tris</span><span><b id="st-verts">–</b> verts</span><span><b id="st-tex">–</b> textures</span><span class="hide-sm"><b id="st-mats">–</b> materials</span></p>
+      </div>
+      <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    </div>
+    </div>
+  </section>
+
+  <svg class="terrain " viewBox="0 0 1440 192" preserveAspectRatio="none" aria-hidden="true"><use href="#pix"/></svg>
+  <div class="band">
+  <section id="gallery" class="wrap section">
+    <div class="section-head">
+      <span class="label">// REAL-TIME</span>
+      <h2 class="title"><span class="mix " aria-label="3D Models"><span aria-hidden="true"><span class="w"><span class="sf">3</span><span class="px">D</span></span> <span class="w"><span class="sf">M</span><span class="px">odels</span></span></span></span></h2>
+      <p class="intro">Click a model to load it into the viewer above, then check its wireframe and texture maps.</p>
+    </div>
+    <div class="gallery" id="gallery-grid"><p class="empty">Loading models…</p></div>
+  </section>
+  </div>
+
+  <section id="work" class="wrap section">
+    <div class="section-head">
+      <span class="label">// CONTENT</span>
+      <h2 class="title"><span class="mix " aria-label="Selected Work"><span aria-hidden="true"><span class="w"><span class="sf">S</span><span class="px">elected</span></span> <span class="w"><span class="sf">W</span><span class="px">ork</span></span></span></span></h2>
+      <p class="intro">Characters, hard-surface models, props and environments. More on <a href="https://www.artstation.com/seju_fbx">ArtStation</a>.</p>
+    </div>
+    <!-- PLACEHOLDERS: replace the [brackets] with your own text, and add images/work-1.jpg … work-8.jpg.
+         Copy a <article class="work"> block to add more pieces. -->
+    <div class="works">
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-1.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-2.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-3.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-4.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-5.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-6.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-7.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+      <article class="work">
+        <div class="work-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg><img src="images/work-8.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="work-body"><strong>[Work title]</strong><small>[One or two lines: what it is, and how you made it.]</small><span class="tags"><span>[Type]</span><span>[Tool]</span></span></div>
+      </article>
+    </div>
+  </section>
+
+  <svg class="terrain flip lime" viewBox="0 0 1440 192" preserveAspectRatio="none" aria-hidden="true"><use href="#pix"/></svg>
+  <section id="projects" class="wrap section">
+    <div class="section-head">
+      <span class="label">// LEVEL SELECT</span>
+      <h2 class="title"><span class="mix " aria-label="Game Art"><span aria-hidden="true"><span class="w"><span class="sf">G</span><span class="px">ame</span></span> <span class="w"><span class="sf">A</span><span class="px">rt</span></span></span></span></h2>
+      <p class="intro">Games I've helped make, and exactly what I built for each one.</p>
+    </div>
+    <div class="levels">
+      <article class="level">
+        <div class="level-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-beyond-the-scene.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="level-body">
+          <p class="level-meta"><span class="num">01</span> Beyond Game Jam 2026 <span class="new">NEW</span></p>
+          <h3>Beyond The Scene</h3>
+          <p>An atmospheric visual narrative game about the unseen forms of women&#x27;s labour. No dialogue: the rooms and objects tell the story. Team Tomboy, 5 people.</p>
+          <p class="role"><strong>My role</strong> 3D artist and programmer. I designed and modelled the stop-motion style characters.</p>
+          <div class="level-foot"><span class="tags"><span>Unity</span><span>Blender</span><span>Characters</span></span><a class="btn lime" href="https://tokwalover666.itch.io/beyond-the-scene">Play it ▶</a></div>
+        </div>
+      </article>
+      <article class="level">
+        <div class="level-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-factory-romance.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="level-body">
+          <p class="level-meta"><span class="num">02</span> Global Game Jam 2026 @ CIIT <span class="new">NEW</span></p>
+          <h3>Factory Romance</h3>
+          <p>You work in a mask factory, but love finds a way: steal kisses in secret, then get back to packing boxes before the boss sees.</p>
+          <p class="role"><strong>My role</strong> Co-developer in a team of two.</p>
+          <div class="level-foot"><span class="tags"><span>Unity</span><span>3D</span></span><a class="btn lime" href="https://tokwalover666.itch.io/factory-romance">Play it ▶</a></div>
+        </div>
+      </article>
+      <article class="level">
+        <div class="level-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-slop-machine.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="level-body">
+          <p class="level-meta"><span class="num">03</span> Bad Game Jam 2026 <span class="new">NEW</span></p>
+          <h3>SLOP MACHINE</h3>
+          <p>A chaotic little game about questionable financial decisions: rob strangers, then feed the coins to the slot machine. Kulam Studio, 6 people.</p>
+          <p class="role"><strong>My role</strong> Game designer, 3D artist and animator.</p>
+          <div class="level-foot"><span class="tags"><span>Unity</span><span>Blender</span><span>Animation</span></span><a class="btn lime" href="https://tokwalover666.itch.io/slop-machine">Play it ▶</a></div>
+        </div>
+      </article>
+      <article class="level">
+        <div class="level-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-cringr.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="level-body">
+          <p class="level-meta"><span class="num">04</span> Bad Game Jam 2025 </p>
+          <h3>Cringr</h3>
+          <p>A dating app no one asked for: swipe through 60 cringe profiles to find the two hidden endings. Team of 4.</p>
+          <p class="role"><strong>My role</strong> 3D artist, programmer and audio design.</p>
+          <div class="level-foot"><span class="tags"><span>Unity</span><span>Comedy</span></span><a class="btn lime" href="https://tokwalover666.itch.io/cringr">Play it ▶</a></div>
+        </div>
+      </article>
+      <article class="level">
+        <div class="level-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-handle-with-care.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="level-body">
+          <p class="level-meta"><span class="num">05</span> Beyond Game Jam 2025 </p>
+          <h3>Handle With Care</h3>
+          <p>A short, atmospheric puzzle game about piecing together broken objects and memories after a breakup, made for Pride Month. Team of 5.</p>
+          <p class="role"><strong>My role</strong> 3D artist and 3D animation.</p>
+          <div class="level-foot"><span class="tags"><span>Unity</span><span>3D</span><span>Puzzle</span></span><a class="btn lime" href="https://tokwalover666.itch.io/handle-with-care">Play it ▶</a></div>
+        </div>
+      </article>
+      <article class="level">
+        <div class="level-thumb"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15 12h.01M18 13h.01"/></svg><img src="images/game-the-last-input.jpg" alt="" loading="lazy" onerror="this.remove()"></div>
+        <div class="level-body">
+          <p class="level-meta"><span class="num">06</span> Capstone project </p>
+          <h3>The Last Input</h3>
+          <p>Our capstone: a sci-fi game built in Unity, across areas like Sector Null and The Zenith.</p>
+          <p class="role"><strong>My role</strong> Environment design, plus original drones and game props.</p>
+          <div class="level-foot"><span class="tags"><span>Unity</span><span>Environment</span></span><span class="btn ghost static">In development</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="toolkit" class="wrap section">
+    <div class="section-head">
+      <span class="label">// LOADOUT</span>
+      <h2 class="title"><span class="mix " aria-label="Toolkit"><span aria-hidden="true"><span class="w"><span class="sf">T</span><span class="px">oolkit</span></span></span></span></h2>
+    </div>
+    <div class="tool-grid">
+      <ul class="software" aria-label="Software">
+        <li class="tool-tile"><span class="tile-ic" style="--c:#c23a3a">Bl</span><span class="tile-name">Blender</span></li><li class="tool-tile"><span class="tile-ic" style="--c:#ccc285">Sp</span><span class="tile-name">Substance 3D Painter</span></li><li class="tool-tile"><span class="tile-ic" style="--c:#7fa37f">CC</span><span class="tile-name">Character Creator 3</span></li><li class="tool-tile"><span class="tile-ic" style="--c:#f2e8d7">U</span><span class="tile-name">Unity</span></li><li class="tool-tile"><span class="tile-ic" style="--c:#d6ccb6">UE</span><span class="tile-name">Unreal Engine 5</span></li>
+      </ul>
+      <div class="skill-panels">
+        <div class="skill"><h3>3D art</h3><span class="tags"><span>Character modelling</span><span>Hard-surface modelling</span><span>Environment design</span><span>Low-poly &amp; game-ready assets</span><span>Hand-painted textures</span><span>Rendering in Cycles</span></span><p>Seen in: Selected Work and Game Art above.</p></div>
+        <div class="skill"><h3>Game development</h3><span class="tags"><span>Asset integration</span><span>Animation</span><span>Programming</span><span>Game design</span><span>Game jams</span></span><p>Seen in: 5 game jam games, from Cringr to Beyond The Scene.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="wrap section">
+    <div class="section-head">
+      <span class="label">// PLAYER PROFILE</span>
+      <h2 class="title"><span class="mix " aria-label="About Me"><span aria-hidden="true"><span class="w"><span class="sf">A</span><span class="px">bout</span></span> <span class="w"><span class="sf">M</span><span class="px">e</span></span></span></span></h2>
+    </div>
+    <div class="about">
+      <div class="about-text">
+        <span class="tagbox"><span>Introduction</span></span>
+        <p>Hello, I'm Shyanne. I'm a passionate game developer with a strong focus on 3D art. My expertise includes character modelling, environment design and creating optimised, game-ready assets.</p>
+        <p>I'm always improving my skills in 3D workflows, texturing and asset integration, and I enjoy collaborating with others to create immersive and engaging game experiences. I aspire to become a senior 3D artist at a game development studio.</p>
+        <div class="actions"><a class="btn orange" href="https://www.linkedin.com/in/shyanne-cay-77a0bb37b/">Connect on LinkedIn</a></div>
+      </div>
+      <div class="panel">
+        <span class="tagbox"><span>Highlights</span></span>
+        <div class="entry"><span>2026</span><span><strong>Beyond Game Jam: BiasBreakers</strong> · Beyond The Scene</span><span class="note">3D artist and programmer.</span></div>
+        <div class="entry"><span>2026</span><span><strong>Global Game Jam @ CIIT</strong> · Factory Romance</span><span class="note">Co-developer, team of two.</span></div>
+        <div class="entry"><span>2026</span><span><strong>Bad Game Jam</strong> · SLOP MACHINE</span><span class="note">Game designer, 3D artist and animator.</span></div>
+        <div class="entry"><span>2025</span><span><strong>Bad Game Jam</strong> · Cringr</span><span class="note">3D artist, programmer and audio design.</span></div>
+        <div class="entry"><span>2025</span><span><strong>Beyond Game Jam</strong> · Handle With Care</span><span class="note">3D artist and 3D animation.</span></div>
+        <div class="entry"><span>CAPSTONE</span><span><strong>The Last Input</strong> · Unity</span><span class="note">Environment design, drones and props.</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<svg class="terrain " viewBox="0 0 1440 192" preserveAspectRatio="none" aria-hidden="true"><use href="#pix"/></svg>
+<footer id="contact" class="contact">
+  <div class="wrap">
+    <div>
+      <span class="label">// MULTIPLAYER</span>
+      <h2 class="title"><span class="mix " aria-label="Contact"><span aria-hidden="true"><span class="w"><span class="sf">C</span><span class="px">ontact</span></span></span></span></h2>
+      <p>Open to 3D artist roles at game studios, game jam teams and freelance models.</p>
+    </div>
+    <ul class="ribbons">
+      <li><a class="ribbon" href="mailto:shyanne.kimberly.cay@gmail.com"><span class="rib-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><span class="rib-text">shyanne.kimberly.cay@gmail.com</span></a></li>
+      <li><a class="ribbon" href="https://www.linkedin.com/in/shyanne-cay-77a0bb37b/"><span class="rib-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 9h3.5v11H4zM5.75 3.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM10 9h3.3v1.6c.5-.9 1.7-1.8 3.4-1.8 3.6 0 4.3 2.3 4.3 5.4V20h-3.5v-5c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8V20H10z"/></svg></span><span class="rib-text">linkedin.com/in/shyanne-cay</span></a></li>
+      <li><a class="ribbon" href="https://www.artstation.com/seju_fbx"><span class="rib-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 17.5 4.2 21h12.5l-2.3-3.5zM22 17.3c0-.4-.1-.8-.3-1.1L14.4 3.6A1.2 1.2 0 0 0 13.4 3H9.6l11 19 1.1-1.9c.2-.4.3-.6.3-1.8zM12.3 14.3 9 8.5l-3.3 5.8z"/></svg></span><span class="rib-text">artstation.com/seju_fbx</span></a></li>
+      <li><a class="ribbon" href="https://seju-fbx.itch.io/"><span class="rib-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9 6 4h12l2 5"/><path d="M4 9c0 1.5 1.3 2.5 2.7 2.5S9.3 10.5 9.3 9c0 1.5 1.3 2.5 2.7 2.5s2.7-1 2.7-2.5c0 1.5 1.3 2.5 2.6 2.5S20 10.5 20 9"/><path d="M5 11.5V20h14v-8.5"/><path d="M10 20v-4h4v4"/></svg></span><span class="rib-text">seju-fbx.itch.io</span></a></li>
+      <li><span class="ribbon static"><span class="rib-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span class="rib-text">Philippines</span></span></li>
+    </ul>
+  </div>
+  <p class="footer-note">© 2026 SHYANNE CAY · THANKS FOR PLAYING</p>
+</footer>
+</div>
+
+<script src="lens.js"></script>
+<script type="module" src="viewer.js"></script>
+</body>
+</html>
